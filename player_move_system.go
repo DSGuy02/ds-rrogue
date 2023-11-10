@@ -23,10 +23,16 @@ func TryMovePlayer(g *Game) {
 		x = 1
 	}
 
+	level := g.Map.CurrentLevel
+
 	for _, result := range g.World.Query(players) {
 		pos := result.Components[position].(*Position)
+		index := level.GetIndexFromXY(pos.X+x, pos.Y+y)
 
-		pos.X += x
-		pos.Y += y
+		tile := level.Tiles[index]
+		if tile.Blocked != true {
+			pos.X += x
+			pos.Y += y
+		}
 	}
 }
