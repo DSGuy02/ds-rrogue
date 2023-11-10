@@ -20,3 +20,15 @@ func GetDiceRoll(num int) int {
 
 	return int(x.Int64()) + 1
 }
+
+// Returns a number between the two numbers inclusive.
+func GetRandomBetween(low int, high int) int {
+	var randy int = -1
+	for {
+		randy = GetDiceRoll(high)
+		if randy >= low {
+			break
+		}
+	}
+	return randy
+}
