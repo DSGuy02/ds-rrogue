@@ -27,7 +27,15 @@ type MapTile struct {
 	Blocked    bool
 	IsRevealed bool
 	Image      *ebiten.Image
+	TileType   TileType
 }
+
+type TileType int
+
+const (
+	WALL TileType = iota
+	FLOOR
+)
 
 /*
 	Functions
@@ -79,7 +87,8 @@ func (level Level) InBounds(x, y int) bool {
 func (level Level) IsOpaque(x, y int) bool {
 	idx := level.GetIndexFromXY(x, y)
 
-	return level.Tiles[idx].Blocked
+	// Our vision is only blocked by walls and not random objects
+	return level.Tiles[idx].TileType == WALL
 }
 
 // GetIndexFromXY gets the index of the map array from a given X, Y TILE coordinate.
@@ -105,10 +114,12 @@ func (level *Level) createTiles() []MapTile {
 			}
 
 			tile := MapTile{
-				PixelX:  x * gd.TileWidth,
-				PixelY:  y * gd.TileHeight,
-				Blocked: true,
-				Image:   wall,
+				PixelX:     x * gd.TileWidth,
+				PixelY:     y * gd.TileHeight,
+				Blocked:    true,
+				Image:      wall,
+				IsRevealed: false,
+				TileType:   WALL,
 			}
 
 			tiles[index] = tile
@@ -123,6 +134,7 @@ func (level *Level) createRoom(room Rect) {
 		for x := room.X1 + 1; x < room.X2; x++ {
 			index := level.GetIndexFromXY(x, y)
 			level.Tiles[index].Blocked = false
+			level.Tiles[index].TileType = FLOOR
 			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
 			if err != nil {
 				log.Fatal(err)
@@ -139,6 +151,7 @@ func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
 		index := level.GetIndexFromXY(x, y)
 		if index > 0 && index < gd.ScreenWidth*gd.ScreenHeight {
 			level.Tiles[index].Blocked = false
+			level.Tiles[index].TileType = FLOOR
 			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
 			if err != nil {
 				log.Fatal(err)
@@ -156,6 +169,7 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 
 		if index > 0 && index < gd.ScreenWidth*gd.ScreenHeight {
 			level.Tiles[index].Blocked = false
+			level.Tiles[index].TileType = FLOOR
 			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
 			if err != nil {
 				log.Fatal(err)
