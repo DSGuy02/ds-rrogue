@@ -21,6 +21,7 @@ func TryMovePlayer(g *Game) {
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		x = 1
+
 	}
 
 	level := g.Map.CurrentLevel
