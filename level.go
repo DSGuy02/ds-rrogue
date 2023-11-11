@@ -35,7 +35,7 @@ func NewLevel() Level {
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
-	
+
 	return l
 }
 
@@ -47,8 +47,8 @@ func (level *Level) GetIndexFromXY(x int, y int) int {
 	return (y * gd.ScreenWidth) + x
 }
 
-// CreateTiles creates a map of all walls as a baseline for carving out a level.
-func (level *Level) CreateTiles() []MapTile {
+// createTiles creates a map of all walls as a baseline for carving out a level.
+func (level *Level) createTiles() []MapTile {
 	gd := NewGameData()
 	tiles := make([]MapTile, gd.ScreenHeight*gd.ScreenWidth)
 	index := 0
@@ -56,21 +56,20 @@ func (level *Level) CreateTiles() []MapTile {
 	for x := 0; x < gd.ScreenWidth; x++ {
 		for y := 0; y < gd.ScreenHeight; y++ {
 			index = level.GetIndexFromXY(x, y)
-			if x == 0 || x == gd.ScreenWidth-1 || y == 0 || y == gd.ScreenHeight-1 {
-				wall, _, err := ebitenutil.NewImageFromFile("assets/wall.png")
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				tile := MapTile{
-					PixelX:  x * gd.TileWidth,
-					PixelY:  y * gd.TileHeight,
-					Blocked: true,
-					Image:   wall,
-				}
-
-				tiles[index] = tile
+			wall, _, err := ebitenutil.NewImageFromFile("assets/wall.png")
+			if err != nil {
+				log.Fatal(err)
 			}
+
+			tile := MapTile{
+				PixelX:  x * gd.TileWidth,
+				PixelY:  y * gd.TileHeight,
+				Blocked: true,
+				Image:   wall,
+			}
+
+			tiles[index] = tile
+		}
 	}
 
 	return tiles
@@ -109,14 +108,14 @@ func (level *Level) GenerateLevelTiles() {
 	MAX_ROOMS := 30
 
 	gd := NewGameData()
-	tiles := level.CreateTiles()
+	tiles := level.createTiles()
 	level.Tiles = tiles
 
 	for idx := 0; idx < MAX_ROOMS; idx++ {
 		w := GetRandomBetween(MIN_SIZE, MAX_SIZE)
 		h := GetRandomBetween(MIN_SIZE, MAX_SIZE)
-		x := GetDiceRoll(gd.ScreenHeight - w - 1) - 1
-		y := GetDiceRoll(gd.ScreenHeight - h - 1) - 1
+		x := GetDiceRoll(gd.ScreenHeight-w-1) - 1
+		y := GetDiceRoll(gd.ScreenHeight-h-1) - 1
 
 		new_room := NewRect(x, y, w, h)
 		okToAdd := true
@@ -129,7 +128,7 @@ func (level *Level) GenerateLevelTiles() {
 		}
 
 		if okToAdd {
-			level.CreateTiles(new_room)
+			level.createRoom(new_room)
 			level.Rooms = append(level.Rooms, new_room)
 		}
 	}
