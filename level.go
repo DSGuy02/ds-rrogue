@@ -12,18 +12,17 @@ import (
 /*
 	Structs
 */
+// Level holds the tile information for a complete dungeon level.
+type Level struct {
+	Tiles []MapTile
+	Rooms []Rect
+}
 
 type MapTile struct {
 	PixelX  int
 	PixelY  int
 	Blocked bool
 	Image   *ebiten.Image
-}
-
-// Level holds the tile information for a complete dungeon level.
-type Level struct {
-	Tiles []MapTile
-	Rooms []Rect
 }
 
 /*
@@ -37,6 +36,18 @@ func NewLevel() Level {
 	l.GenerateLevelTiles()
 
 	return l
+}
+
+func (level *Level) DrawLevel(screen *ebiten.Image) {
+	gd := NewGameData()
+	for x := 0; x < gd.ScreenWidth; x++ {
+		for y := 0; y < gd.ScreenHeight; y++ {
+			tile := level.Tiles[level.GetIndexFromXY(x, y)]
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
+			screen.DrawImage(tile.Image, op)
+		}
+	}
 }
 
 // GetIndexFromXY gets the index of the map array from a given X, Y TILE coordinate.
@@ -122,29 +133,17 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 	}
 }
 
-func (level *Level) DrawLevel(screen *ebiten.Image) {
-	gd := NewGameData()
-	for x := 0; x < gd.ScreenWidth; x++ {
-		for y := 0; y < gd.ScreenHeight; y++ {
-			tile := level.Tiles[level.GetIndexFromXY(x, y)]
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
-			screen.DrawImage(tile.Image, op)
-		}
-	}
-}
-
 // GenerateLevelTiles creates a new Dungeon Level Map.
 func (level *Level) GenerateLevelTiles() {
 	MIN_SIZE := 6
 	MAX_SIZE := 10
 	MAX_ROOMS := 30
 
-	contains_rooms := false
-
 	gd := NewGameData()
 	tiles := level.createTiles()
 	level.Tiles = tiles
+
+	contains_rooms := false
 
 	for idx := 0; idx < MAX_ROOMS; idx++ {
 		w := GetRandomBetween(MIN_SIZE, MAX_SIZE)
@@ -164,21 +163,18 @@ func (level *Level) GenerateLevelTiles() {
 
 		if okToAdd {
 			level.createRoom(new_room)
+			if contains_rooms {
+				newX, newY := new_room.Center()
+				prevX, prevY := level.Rooms[len(level.Rooms)-1].Center()
 
-			if len(level.Rooms) == 0 {
-				if contains_rooms {
-					newX, newY := new_room.Center()
-					prevX, prevY := level.Rooms[len(level.Rooms)-1].Center()
+				coinflip := GetDiceRoll(2)
 
-					coinflip := GetDiceRoll(2)
-
-					if coinflip == 2 {
-						level.createHorizontalTunnel(prevX, newX, prevY)
-						level.createVerticalTunnel(prevY, newY, newX)
-					} else {
-						level.createHorizontalTunnel(prevX, newX, newY)
-						level.createVerticalTunnel(prevY, newY, prevX)
-					}
+				if coinflip == 2 {
+					level.createHorizontalTunnel(prevX, newX, prevY)
+					level.createVerticalTunnel(prevY, newY, newX)
+				} else {
+					level.createHorizontalTunnel(prevX, newX, newY)
+					level.createVerticalTunnel(prevY, newY, prevX)
 				}
 			}
 			level.Rooms = append(level.Rooms, new_room)
