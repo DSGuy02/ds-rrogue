@@ -32,6 +32,8 @@ type MapTile struct {
 
 type TileType int
 
+var levelHeight int = 0
+
 var floor *ebiten.Image
 var wall *ebiten.Image
 
@@ -198,6 +200,8 @@ func (level *Level) GenerateLevelTiles() {
 	MAX_ROOMS := 30
 
 	gd := NewGameData()
+	levelHeight = gd.ScreenHeight - gd.UIHeight
+
 	tiles := level.createTiles()
 	level.Tiles = tiles
 

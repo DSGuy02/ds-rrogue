@@ -39,6 +39,12 @@ type Name struct {
 	Label string
 }
 
+type UserMessage struct {
+	AttackMessage    string
+	DeadMessage      string
+	GameStateMessage string
+}
+
 type Renderable struct {
 	Image *ebiten.Image
 }

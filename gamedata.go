@@ -8,6 +8,7 @@ type GameData struct {
 	ScreenHeight int
 	TileWidth    int
 	TileHeight   int
+	UIHeight     int
 }
 
 // NewGameData creates a fully populated GameData Struct.
@@ -17,6 +18,7 @@ func NewGameData() GameData {
 		ScreenHeight: 50,
 		TileWidth:    16,
 		TileHeight:   16,
+		UIHeight:     10,
 	}
 
 	return g
