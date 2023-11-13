@@ -97,7 +97,7 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 				manager.NewEntity().
 					AddComponent(monster, &Monster{}).
 					AddComponent(renderable, &Renderable{
-						Image: skellyImg,
+						Image: orcImg,
 					}).
 					AddComponent(position, &Position{
 						X: mX,
