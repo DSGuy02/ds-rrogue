@@ -1,4 +1,6 @@
 // Code written by Oladeji Sanyaolu (main.go) 08/11/2023
+// Followed the tutorial: https://www.fatoldyeti.com/categories/roguelike-tutorial/
+// The tutorial's GitHub: https://github.com/RAshkettle/rrogue/
 
 package main
 
