@@ -111,7 +111,7 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 	renderables := ecs.BuildTag(renderable, position)
 	tags["renderables"] = renderables
 
-	monsters := ecs.BuildTag(monster, position)
+	monsters := ecs.BuildTag(monster, position, health, meleeWeapon, armor, name)
 	tags["monsters"] = monsters
 
 	return manager, tags
