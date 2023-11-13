@@ -43,8 +43,9 @@ func (g *Game) Update() error {
 		TryMovePlayer(g)
 	}
 
-	// Obviously for now
-	g.Turn = PlayerTurn
+	if g.Turn == MonsterTurn {
+		UpdateMonster(g)
+	}
 
 	return nil
 }
