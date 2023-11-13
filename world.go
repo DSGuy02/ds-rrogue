@@ -31,6 +31,14 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	skellyImg, _, err := ebitenutil.NewImageFromFile("assets/skelly.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	orcImg, _, err := ebitenutil.NewImageFromFile("assets/orc.png")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	player := manager.NewComponent()
 	position = manager.NewComponent()
@@ -77,44 +85,77 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 			Image: playerImg,
 		})
 
-	skellyImg, _, err := ebitenutil.NewImageFromFile("assets/skelly.png")
-	if err != nil {
-		log.Fatal(err)
-	}
 	// Add a Monster in each room except the player's room
 	for _, room := range startingLevel.Rooms {
 		if room.X1 != startingRoom.X1 {
 			mX, mY := room.Center()
-			manager.NewEntity().
-				AddComponent(monster, &Monster{}).
-				AddComponent(renderable, &Renderable{
-					Image: skellyImg,
-				}).
-				AddComponent(position, &Position{
-					X: mX,
-					Y: mY,
-				}).
-				AddComponent(health, &Health{
-					MaxHealth:     10,
-					CurrentHealth: 10,
-				}).
-				AddComponent(meleeWeapon, &MeleeWeapon{
-					Name:          "Short Sword",
-					MinimumDamage: 2,
-					MaximumDamage: 6,
-					ToHitBonus:    0,
-				}).
-				AddComponent(armor, &Armor{
-					Name:       "Bone",
-					Defense:    3,
-					ArmorClass: 4,
-				}).
-				AddComponent(name, &Name{Label: "Skeleton"}).
-				AddComponent(userMessage, &UserMessage{
-					AttackMessage:    "",
-					DeadMessage:      "",
-					GameStateMessage: "",
-				})
+
+			// Flip a coin to see what to add....
+			mobSpawn := GetDiceRoll(2)
+
+			if mobSpawn == 1 {
+				manager.NewEntity().
+					AddComponent(monster, &Monster{}).
+					AddComponent(renderable, &Renderable{
+						Image: skellyImg,
+					}).
+					AddComponent(position, &Position{
+						X: mX,
+						Y: mY,
+					}).
+					AddComponent(health, &Health{
+						MaxHealth:     30,
+						CurrentHealth: 30,
+					}).
+					AddComponent(meleeWeapon, &MeleeWeapon{
+						Name:          "Machete",
+						MinimumDamage: 4,
+						MaximumDamage: 8,
+						ToHitBonus:    1,
+					}).
+					AddComponent(armor, &Armor{
+						Name:       "Leather",
+						Defense:    5,
+						ArmorClass: 6,
+					}).
+					AddComponent(name, &Name{Label: "Orc"}).
+					AddComponent(userMessage, &UserMessage{
+						AttackMessage:    "",
+						DeadMessage:      "",
+						GameStateMessage: "",
+					})
+			} else {
+				manager.NewEntity().
+					AddComponent(monster, &Monster{}).
+					AddComponent(renderable, &Renderable{
+						Image: skellyImg,
+					}).
+					AddComponent(position, &Position{
+						X: mX,
+						Y: mY,
+					}).
+					AddComponent(health, &Health{
+						MaxHealth:     10,
+						CurrentHealth: 10,
+					}).
+					AddComponent(meleeWeapon, &MeleeWeapon{
+						Name:          "Short Sword",
+						MinimumDamage: 2,
+						MaximumDamage: 6,
+						ToHitBonus:    0,
+					}).
+					AddComponent(armor, &Armor{
+						Name:       "Bone",
+						Defense:    3,
+						ArmorClass: 4,
+					}).
+					AddComponent(name, &Name{Label: "Skeleton"}).
+					AddComponent(userMessage, &UserMessage{
+						AttackMessage:    "",
+						DeadMessage:      "",
+						GameStateMessage: "",
+					})
+			}
 		}
 	}
 	players := ecs.BuildTag(player, position, health, meleeWeapon, armor, name, userMessage)
