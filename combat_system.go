@@ -51,6 +51,11 @@ func AttackSystem(g *Game, attackerPosition *Position, defenderPosition *Positio
 	defenderMessage := defender.Components[userMessage].(*UserMessage)
 	attackerMessage := attacker.Components[userMessage].(*UserMessage)
 
+	// If the attacker is dead, don't let them attackerWeapon
+	if attacker.Components[health].(*Health).CurrentHealth <= 0 {
+		return
+	}
+
 	// Roll a d10 to hit
 	toHitRoll := GetDiceRoll(10)
 
