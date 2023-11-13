@@ -10,13 +10,33 @@ import (
 
 type Player struct{}
 
-type Monster struct {
-	Name string
-}
+type Monster struct{}
 
 type Position struct {
 	X int
 	Y int
+}
+
+type Health struct {
+	MaxHealth     int
+	CurrentHealth int
+}
+
+type MeleeWeapon struct {
+	Name          string
+	MinimumDamage int
+	MaximumDamage int
+	ToHitBonus    int
+}
+
+type Armor struct {
+	Name       string
+	Defense    int
+	ArmorClass int
+}
+
+type Name struct {
+	Label string
 }
 
 type Renderable struct {
@@ -31,4 +51,8 @@ func (p *Position) GetManhattanDistance(other *Position) int {
 	yDist := math.Abs(float64(p.Y - other.Y))
 
 	return int(xDist) + int(yDist)
+}
+
+func (p *Position) isEqual(other *Position) bool {
+	return (p.X == other.X && p.Y == other.Y)
 }
