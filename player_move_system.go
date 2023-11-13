@@ -31,6 +31,7 @@ func TryMovePlayer(g *Game) {
 
 	for _, result := range g.World.Query(players) {
 		pos := result.Components[position].(*Position)
+		//mon := result.Components[monster].(*Monster)
 		index := level.GetIndexFromXY(pos.X+x, pos.Y+y)
 
 		tile := level.Tiles[index]
