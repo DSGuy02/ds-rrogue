@@ -3,7 +3,6 @@ module github.com/DSGuy02/ds-rrogue
 go 1.20
 
 require (
-	github.com/RAshkettle/rrogue v0.0.19
 	github.com/bytearena/ecs v1.0.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.2
 	github.com/norendren/go-fov v1.0.1
