@@ -1,10 +1,8 @@
-// Code written by Oladeji Sanyaolu (monster_system.go) 09/11/2023
+// Code written by Oladeji Sanyaolu (monster_system.go) 13/11/2023
 
 package main
 
 import (
-	"log"
-
 	"github.com/norendren/go-fov/fov"
 )
 
@@ -26,7 +24,18 @@ func UpdateMonster(game *Game) {
 		monsterSees.Compute(l, pos.X, pos.Y, 8)
 
 		if monsterSees.IsVisible(playerPosition.X, playerPosition.Y) {
-			log.Printf("%s shivers to its bones.", mon.Name)
+			astar := AStar{}
+			path := astar.GetPath(l, pos, &playerPosition)
+
+			if len(path) > 1 {
+				nextTile := l.Tiles[l.GetIndexFromXY(path[1].X, path[1].Y)]
+				if !nextTile.Blocked {
+					l.Tiles[l.GetIndexFromXY(pos.X, pos.Y)].Blocked = false
+					pos.X = path[1].X
+					pos.Y = path[1].Y
+					nextTile.Blocked = true
+				}
+			}
 		}
 	}
 
